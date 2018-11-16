@@ -33,21 +33,32 @@ class BlockObject(object):
 
         self.features = self.raw_data['features']
 
-    def generate_dataframe(self):
+        print(self.raw_data)
+
+    def generate_frame(self):
         features_frame = pd.DataFrame(self.features)
         features_frame = features_frame.drop(columns='type')
 
-        coord_frame = features_frame['geometry'][:].loc[0]['coordinates']
-        properties_frame = features_frame['properties']
+        scrape_frame = pd.DataFrame()
 
+        for i, key in features_frame.iterrows():
 
-        rendered_frame = pd.DataFrame()
+            # for geokey in features_frame.geometry[i]:
+        scrape_frame[key] = features_frame.geometry.apply(lambda x: x[key])
 
+            for key in features_frame.properties[i]:
+                properties_frame[key] = features_frame.properties.apply(lambda x: x[key])
 
+        rendered_frame = properties_frame.join(geometry_frame)
+        rendered_frame = rendered_frame.fillna('NaN')
 
-        return coord_frame
+        return rendered_frame
 
         '''
+         for key in features_frame.properties[i]:
+                properties_frame[key] = features_frame.properties.apply(lambda x: x[key])
+        
+        
         for counter, row in enumerate(features_frame.iterrows()):
         element_name = row
 
@@ -58,4 +69,4 @@ class BlockObject(object):
 
 
 response = BlockObject('Home Depot', block_size=2)
-print(response.generate_dataframe())
+print(response.generate_frame())
