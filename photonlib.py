@@ -23,28 +23,13 @@ class BlockObject(object):
             url_constructor('q=\'{:s}\'&limit={:d}'.format(self.query, self.block_size))).json()
         self.features = self.raw_data['features']
         self.features_frame = pd.DataFrame(self.features)
-        self.geometry = self.features_frame['geometry']
-        self.properties = self.features_frame['properties']
 
     def render_frame(self):
-        features_frame = pd.DataFrame(self.features)
-        features_frame = features_frame.drop(columns='type')
 
-        properties_frame = pd.DataFrame()
-        property_keys = []
+        feature_frame = pd.DataFrame(self.features)
 
-        rendered_frame = pd.DataFrame()
+        rendered_frame = pd.concat((pd.DataFrame(feature_frame[col].values.tolist()) for col in feature_frame), axis=1)
 
-        rendered_frame['coordinates'] = self.geometry.apply(lambda x: x['coordinates'])
-
-        for key in self.properties:
-            try:
-                properties_frame[key] = self.properties.apply(lambda x: x[key])
-
-            except KeyError:
-                properties_frame[key] = "This is a key error"
-                print("\nKey Error\n")
-
-        rendered_frame = rendered_frame.join(properties_frame)
+        rendered_frame = rendered_frame.drop(columns=[ 'osm_id', 'osm_type', 'osm_value', 'type'])
 
         return rendered_frame

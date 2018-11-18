@@ -2,8 +2,8 @@ import pandas as pd
 import time
 import photonlib
 
-rows_per_query = 6500
-time_per_batch = 30
+rows_per_query = 2
+time_per_batch = 3
 biz_names = photonlib.load_biznames()
 data_sink = pd.DataFrame()
 
