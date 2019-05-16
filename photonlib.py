@@ -22,8 +22,7 @@ class BlockObject(object):
         self.raw_data = requests.get(
             url_constructor('q=\'{:s}\'&limit={:d}'.format(self.query, self.block_size))).json()
         self.features = self.raw_data['features']
-        self.features_frame = pd.DataFrame(self.features)
-
+        
     def render_frame(self):
 
         feature_frame = pd.DataFrame(self.features)
